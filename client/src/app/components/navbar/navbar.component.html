@@ -1,0 +1,58 @@
+<div>
+    <mat-toolbar color="primary">
+     
+        <a routerLink="/"> Ofertas y aplicaciones de trabajo</a>
+        <div class="w-full"></div>
+
+        
+        <div *ngIf="authService.getUserFromJWT(); else loggedOut">
+            <div class="flex gap-5 items-center">
+                <a [matMenuTriggerFor]="menu" class="flex gap-2 cursor-pointer items-center">
+                    <div class="bg-red-400 text-white font-bold shadow-md rounded-full w-10 h-10 flex justify-center items-center">
+                        {{authService.getUserFromJWT()!.fullName[0].toUpperCase()}}
+                    </div>
+                    <div class="text-white flex flex-col">
+                        <h1 class="p-0 m-0 font-medium ">
+                            {{authService.getUserFromJWT()!.fullName}}
+                        </h1>
+                        <p class="p-0 m-0 text-xs">
+                            {{authService.getUserFromJWT()!.role}}
+                        </p>
+                    </div>
+                </a>
+                <mat-menu #menu="matMenu">
+                    <button (click)="logout()" mat-menu-item>
+                        <mat-icon>logout</mat-icon>
+                        <span>
+                            Cerrar sesión
+                        </span>
+                    </button>
+                </mat-menu>
+                <a *ngIf="authService.getUserFromJWT()!.role === 'Admin' ||
+                        authService.getUserFromJWT()!.role === 'Reclutador' ||
+                        authService.getUserFromJWT()!.role === 'Candidato'
+                        " mat-button routerLink="/applyjoboffers">
+                    <mat-icon>check_circle</mat-icon>
+                    Aplicar a ofertas de trabajo
+                </a>
+                <a *ngIf="authService.getUserFromJWT()!.role === 'Admin' ||
+                        authService.getUserFromJWT()!.role === 'Reclutador'" mat-button routerLink="/joboffers">
+                    <mat-icon>work</mat-icon>
+                    Ofertas de trabajo
+                </a>
+                <a *ngIf="authService.getUserFromJWT()!.role === 'Admin'" mat-button routerLink="/users">
+                    <mat-icon>groups</mat-icon>
+                    Usuarios
+                </a>
+            </div>
+        </div>
+
+        <ng-template #loggedOut>
+            <div class="flex gap-5 items-center">
+                <a mat-button routerLink="/login">Login</a>
+                <a mat-button routerLink="/register">Crear cuenta</a>
+            </div>
+        </ng-template>
+        
+    </mat-toolbar>
+</div>

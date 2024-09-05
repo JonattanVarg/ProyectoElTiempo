@@ -1,0 +1,40 @@
+<div class="container mx-auto p-5">
+    <div class="shadow-md rounded-md p-10 bg-white w-full max-w-6xl mx-auto">
+      <div class="pb-6">
+        <h2 class="text-2xl font-bold">Ofertas de Trabajo</h2>
+      </div>
+      
+      <div class="overflow-y-auto" style="max-height: 400px;">
+        <mat-list>
+          <mat-list-item *ngFor="let jobOffer of jobOffers" class="mb-4">
+            <div class="flex flex-wrap justify-between items-start w-full">
+              <!-- Título -->
+              <div class="flex-1 min-w-0 mr-4">
+                <div class="text-lg font-semibold truncate">{{ jobOffer.title }}</div>
+              </div>
+  
+              <!-- Descripción, Ubicación y Salario -->
+              <div class="flex-1 min-w-0 mr-4">
+                <div class="text-slate-600 truncate">{{ jobOffer.description }}</div>
+                <div class="text-sm text-slate-500">{{ jobOffer.location }} - {{ jobOffer.salary | currency }}</div>
+              </div>
+  
+              <!-- Tipo de Contrato y Fecha de Publicación -->
+              <div class="flex-1 min-w-0 mr-4">
+                <div class="text-sm text-slate-500">{{ jobOffer.contractType }}</div>
+                <div class="text-sm text-slate-400">Publicación: {{ jobOffer.datePosted | date:'medium' }}</div>
+              </div>
+  
+              <!-- Botón de Aplicar -->
+              <div class="flex-initial ml-10">
+                <button mat-raised-button color="primary" (click)="applyJob(jobOffer.id)">
+                  Aplicar
+                </button>
+              </div>
+            </div>
+          </mat-list-item>
+        </mat-list>
+      </div>
+    </div>
+  </div>
+  

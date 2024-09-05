@@ -1,0 +1,126 @@
+<div class="container mx-auto p-5">
+    <div class="shadow-md rounded-md p-10 bg-white w-full max-w-6xl mx-auto">
+      <div class="pb-6">
+        <h2 class="text-2xl font-bold">
+          {{ isEditing ? 'Edit Job Offer' : 'Publicar oferta laboral' }}
+        </h2>
+        <p class="text-slate-600">
+          {{ isEditing ? 'Modify the details of the job offer.' : 'Rellena los campos para crear la oferta laboral' }}
+        </p>
+      </div>
+  
+      <form [formGroup]="jobOfferForm" (ngSubmit)="saveJobOffer()">
+        <!-- Form fields -->
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Titulo del puesto</mat-label>
+          <input matInput formControlName="title" placeholder="Titulo del puesto" />
+          <mat-error *ngIf="jobOfferForm.get('title')?.hasError('required')">El titulo es requerido</mat-error>
+          <mat-error *ngIf="jobOfferForm.get('title')?.hasError('minlength')">El título debe tener al menos 5 caracteres</mat-error>
+        </mat-form-field>
+  
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Descripción del puesto</mat-label>
+          <textarea matInput formControlName="description" placeholder="Descripción del puesto"></textarea>
+          <mat-error *ngIf="jobOfferForm.get('description')?.hasError('required')">La descripción es requerida</mat-error>
+          <mat-error *ngIf="jobOfferForm.get('description')?.hasError('minlength')">La descripción debe tener al menos 5 caracteres</mat-error>
+        </mat-form-field>
+  
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Ubicación del puesto</mat-label>
+          <input matInput formControlName="location" placeholder="Ubicación del puesto" />
+          <mat-error *ngIf="jobOfferForm.get('location')?.hasError('required')">La ubicación es requerida</mat-error>
+          <mat-error *ngIf="jobOfferForm.get('location')?.hasError('minlength')">La ubicación debe tener al menos 5 caracteres</mat-error>
+        </mat-form-field>
+  
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Salario ofertado</mat-label>
+          <input matInput type="number" formControlName="salary" placeholder="Salario ofertado" />
+          <mat-error *ngIf="jobOfferForm.get('salary')?.hasError('required')">El salario es requerido</mat-error>
+          <mat-error *ngIf="jobOfferForm.get('salary')?.hasError('min')">El salario debe ser mínimo 1</mat-error>
+        </mat-form-field>
+  
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Tipo de contrato del puesto</mat-label>
+          <input matInput formControlName="contractType" placeholder="Tipo de contrato del puesto" />
+          <mat-error *ngIf="jobOfferForm.get('contractType')?.hasError('required')">El tipo de contrato es requerido</mat-error>
+          <mat-error *ngIf="jobOfferForm.get('contractType')?.hasError('minlength')">El tipo de contrato debe tener al menos 5 caracteres</mat-error>
+        </mat-form-field>
+  
+        <div class="flex justify-between mt-8">
+          <button mat-raised-button color="primary" type="submit" [disabled]="!jobOfferForm.valid">
+            {{ isEditing ? 'Actualizar' : 'Publicar' }}
+          </button>
+          <button mat-raised-button color="accent" type="button" (click)="resetForm()">
+            Restaurar
+          </button>
+        </div>
+      </form>
+  
+      <div class="mt-12">
+        <h2 class="text-xl font-bold">
+          Listado de las ofertas laborales
+        </h2>
+        <div class="overflow-y-auto" style="max-height: 400px;">
+          <mat-list>
+            <mat-list-item *ngFor="let jobOffer of jobOffers" class="mb-4">
+              <div class="flex flex-wrap justify-between items-start w-full">
+                <!-- Title -->
+                <div class="flex-1 min-w-0 mr-4">
+                  <div class="text-lg font-semibold truncate">{{ jobOffer.title }}</div>
+                </div>
+  
+                <!-- Description, Location, and Salary -->
+                <div class="flex-1 min-w-0 mr-4">
+                  <div class="text-slate-600 truncate">{{ jobOffer.description }}</div>
+                  <div class="text-sm text-slate-500">{{ jobOffer.location }} - {{ jobOffer.salary | currency }}</div>
+                </div>
+  
+                <!-- Contract Type and Date Posted -->
+                <div class="flex-1 min-w-0 mr-4">
+                  <div class="text-sm text-slate-500">{{ jobOffer.contractType }}</div>
+                  <div class="text-sm text-slate-400">Publicación: {{ jobOffer.datePosted | date:'medium' }}</div>
+                </div>
+  
+                <!-- Buttons -->
+                <div class="flex-initial ml-10">
+                  <button mat-icon-button color="primary" (click)="loadJobOfferForEdit(jobOffer.id)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" (click)="deleteJobOffer(jobOffer.id)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                  <button mat-button color="primary" class="mb-3" (click)="showJobApplication(jobOffer.id)">
+                    <mat-icon>visibility</mat-icon>
+                    Ver aplicaciones
+                  </button>
+                </div>
+              </div>
+            </mat-list-item>
+          </mat-list>
+          
+        </div>
+      </div>
+
+       <!-- Space to display job applications -->
+      <div *ngIf="selectedJobOffer && jobApplications.length > 0" class="mt-12">
+        <h2 class="text-xl font-bold">
+          Aplicaciones para la oferta de trabajo con titulo: {{ selectedJobOffer.title }}
+        </h2>
+        <mat-list>
+          <mat-list-item *ngFor="let application of jobApplications" class="mb-4">
+            <div class="flex flex-wrap justify-between items-start w-full">
+              <div class="flex-1 min-w-0 mr-4">
+                <div class="text-lg font-semibold truncate">{{ application.candidateName }}</div>
+              </div>
+              <div class="flex-1 min-w-0 mr-4">
+                <div class="text-slate-600 truncate">{{ application.candidateEmail }}</div>
+                <div class="text-sm text-slate-500">Enviado el: {{ application.dateApplied | date:'medium' }}</div>
+              </div>
+            </div>
+          </mat-list-item>
+        </mat-list>
+      </div>
+
+    </div>
+  </div>
+  
